@@ -7,9 +7,12 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using HWWeb.Models;
 using HWWeb.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HWWeb.Pages.CRUD.PhoneCRUD
 {
+    [Authorize(Roles = "Admin")]
+
     public class CreateModel : PageModel
     {
         private readonly HWWeb.Services.AppDBContext _context;
@@ -35,10 +38,38 @@ namespace HWWeb.Pages.CRUD.PhoneCRUD
                 return Page();
             }
 
+            if (Phone.Inventory < 0)
+            {
+                ModelState.AddModelError("Phone.Inventory", "Inventory must be greater than or equal to zero.");
+                return Page();
+            }
+
+            if (Phone.Price <= 0)
+            {
+                ModelState.AddModelError("Phone.Price", "Price must be greater than zero.");
+                return Page();
+            }
+
+            if (!IsValidPrice(Phone.Price))
+            {
+                ModelState.AddModelError("Phone.Price", "Price must have exactly two decimal places.");
+                return Page();
+            }
+
             _context.Phone.Add(Phone);
             await _context.SaveChangesAsync();
 
             return RedirectToPage("./Index");
+        }
+
+        private bool IsValidPrice(decimal price)
+        {
+            var priceString = price.ToString();
+            var dotIndex = priceString.IndexOf('.');
+            if (dotIndex == -1)
+                return false;
+
+            return priceString.Substring(dotIndex + 1).Length == 2;
         }
     }
 }

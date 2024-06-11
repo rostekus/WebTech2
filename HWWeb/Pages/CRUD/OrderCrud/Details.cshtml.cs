@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using HWWeb.Models;
 using HWWeb.Services;
 
-namespace HWWeb.Pages.CRUD.PhoneCRUD
+namespace HWWeb.Pages.CRUD.OrderCrud
 {
     public class DetailsModel : PageModel
     {
@@ -19,7 +19,7 @@ namespace HWWeb.Pages.CRUD.PhoneCRUD
             _context = context;
         }
 
-        public Phone Phone { get; set; } = default!;
+        public Models.Order Order { get; set; } = default!;
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -28,14 +28,14 @@ namespace HWWeb.Pages.CRUD.PhoneCRUD
                 return NotFound();
             }
 
-            var phone = await _context.Phone.FirstOrDefaultAsync(m => m.Id == id);
-            if (phone == null)
+            var order = await _context.Order.FirstOrDefaultAsync(m => m.Id == id);
+            if (order == null)
             {
                 return NotFound();
             }
             else
             {
-                Phone = phone;
+                Order = order;
             }
             return Page();
         }

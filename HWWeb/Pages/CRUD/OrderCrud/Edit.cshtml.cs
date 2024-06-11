@@ -8,12 +8,9 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using HWWeb.Models;
 using HWWeb.Services;
-using Microsoft.AspNetCore.Authorization;
 
-namespace HWWeb.Pages.CRUD.PhoneCRUD
+namespace HWWeb.Pages.CRUD.OrderCrud
 {
-    [Authorize(Roles = "Admin")]
-
     public class EditModel : PageModel
     {
         private readonly HWWeb.Services.AppDBContext _context;
@@ -24,7 +21,7 @@ namespace HWWeb.Pages.CRUD.PhoneCRUD
         }
 
         [BindProperty]
-        public Phone Phone { get; set; } = default!;
+        public Models.Order Order { get; set; } = default!;
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -33,12 +30,13 @@ namespace HWWeb.Pages.CRUD.PhoneCRUD
                 return NotFound();
             }
 
-            var phone =  await _context.Phone.FirstOrDefaultAsync(m => m.Id == id);
-            if (phone == null)
+            var order =  await _context.Order.FirstOrDefaultAsync(m => m.Id == id);
+            if (order == null)
             {
                 return NotFound();
             }
-            Phone = phone;
+            Order = order;
+           ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id");
             return Page();
         }
 
@@ -46,12 +44,9 @@ namespace HWWeb.Pages.CRUD.PhoneCRUD
         // For more details, see https://aka.ms/RazorPagesCRUD.
         public async Task<IActionResult> OnPostAsync()
         {
-            if (!ModelState.IsValid)
-            {
-                return Page();
-            }
+           
 
-            _context.Attach(Phone).State = EntityState.Modified;
+            _context.Attach(Order).State = EntityState.Modified;
 
             try
             {
@@ -59,7 +54,7 @@ namespace HWWeb.Pages.CRUD.PhoneCRUD
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!PhoneExists(Phone.Id))
+                if (!OrderExists(Order.Id))
                 {
                     return NotFound();
                 }
@@ -72,9 +67,9 @@ namespace HWWeb.Pages.CRUD.PhoneCRUD
             return RedirectToPage("./Index");
         }
 
-        private bool PhoneExists(int id)
+        private bool OrderExists(int id)
         {
-            return _context.Phone.Any(e => e.Id == id);
+            return _context.Order.Any(e => e.Id == id);
         }
     }
 }

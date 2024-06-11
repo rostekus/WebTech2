@@ -8,12 +8,9 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using HWWeb.Models;
 using HWWeb.Services;
-using Microsoft.AspNetCore.Authorization;
 
-namespace HWWeb.Pages.CRUD.PhoneCRUD
+namespace HWWeb.Pages.CRUD.CartItemCRUD
 {
-    [Authorize(Roles = "Admin")]
-
     public class EditModel : PageModel
     {
         private readonly HWWeb.Services.AppDBContext _context;
@@ -24,7 +21,7 @@ namespace HWWeb.Pages.CRUD.PhoneCRUD
         }
 
         [BindProperty]
-        public Phone Phone { get; set; } = default!;
+        public CartItem CartItem { get; set; } = default!;
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -33,12 +30,12 @@ namespace HWWeb.Pages.CRUD.PhoneCRUD
                 return NotFound();
             }
 
-            var phone =  await _context.Phone.FirstOrDefaultAsync(m => m.Id == id);
-            if (phone == null)
+            var cartitem =  await _context.CartItem.FirstOrDefaultAsync(m => m.Id == id);
+            if (cartitem == null)
             {
                 return NotFound();
             }
-            Phone = phone;
+            CartItem = cartitem;
             return Page();
         }
 
@@ -51,7 +48,7 @@ namespace HWWeb.Pages.CRUD.PhoneCRUD
                 return Page();
             }
 
-            _context.Attach(Phone).State = EntityState.Modified;
+            _context.Attach(CartItem).State = EntityState.Modified;
 
             try
             {
@@ -59,7 +56,7 @@ namespace HWWeb.Pages.CRUD.PhoneCRUD
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!PhoneExists(Phone.Id))
+                if (!CartItemExists(CartItem.Id))
                 {
                     return NotFound();
                 }
@@ -72,9 +69,9 @@ namespace HWWeb.Pages.CRUD.PhoneCRUD
             return RedirectToPage("./Index");
         }
 
-        private bool PhoneExists(int id)
+        private bool CartItemExists(int id)
         {
-            return _context.Phone.Any(e => e.Id == id);
+            return _context.CartItem.Any(e => e.Id == id);
         }
     }
 }

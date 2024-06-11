@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using HWWeb.Models;
 using HWWeb.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HWWeb.Pages.CRUD.PhoneCRUD
 {
+    [Authorize(Roles = "Admin, User")]
     public class IndexModel : PageModel
     {
         private readonly HWWeb.Services.AppDBContext _context;
@@ -19,11 +21,38 @@ namespace HWWeb.Pages.CRUD.PhoneCRUD
             _context = context;
         }
 
-        public IList<Phone> Phone { get;set; } = default!;
+        public IList<Phone> Phone { get; set; } = default!;
+
+        [BindProperty(SupportsGet = true)]
+        public string? SearchString { get; set; }
+
+        [BindProperty(SupportsGet = true)]
+        public decimal? MinPrice { get; set; }
+
+        [BindProperty(SupportsGet = true)]
+        public decimal? MaxPrice { get; set; }
 
         public async Task OnGetAsync()
         {
-            Phone = await _context.Phone.ToListAsync();
+            var phones = from p in _context.Phone
+                         select p;
+
+            if (!string.IsNullOrEmpty(SearchString))
+            {
+                phones = phones.Where(s => s.Model.Contains(SearchString));
+            }
+
+            if (MinPrice.HasValue)
+            {
+                phones = phones.Where(s => s.Price >= MinPrice.Value);
+            }
+
+            if (MaxPrice.HasValue)
+            {
+                phones = phones.Where(s => s.Price <= MaxPrice.Value);
+            }
+
+            Phone = await phones.ToListAsync();
         }
     }
 }
