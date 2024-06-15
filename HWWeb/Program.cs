@@ -2,11 +2,16 @@ using HWWeb.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using HWWeb.Models;
+using HWWeb.Controllers;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+builder.Services.AddControllers();
+builder.Services.AddScoped<RolesController>();
+
 builder.Services.AddDbContext<AppDBContext>(options =>
 {
     var connStr = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -14,6 +19,9 @@ builder.Services.AddDbContext<AppDBContext>(options =>
 
 });
 
+builder.Services.AddSession();
+
+builder.Services.AddControllersWithViews();
 
 builder.Services.AddLogging(builder =>
 {
@@ -21,10 +29,13 @@ builder.Services.AddLogging(builder =>
 });
    
 
-builder.Services.AddDefaultIdentity<User>(
+builder.Services.AddIdentity<User, IdentityRole>(
     options => options.SignIn.RequireConfirmedAccount = true)
+    .AddDefaultUI()
     .AddRoles<IdentityRole>()
+    .AddDefaultTokenProviders()
     .AddEntityFrameworkStores<AppDBContext>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -45,10 +56,52 @@ using (var scope = app.Services.CreateScope())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
+
+app.UseSession();
+
 app.UseRouting();
 
 app.UseAuthorization();
 
 app.MapRazorPages();
 
-app.Run();
+using (var scope = app.Services.CreateScope())
+{
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+    var roles = new string[] { "Admin", "User" };
+
+    foreach (var role in roles)
+    {
+        if (!await roleManager.RoleExistsAsync(role))
+        {
+            await roleManager.CreateAsync(new IdentityRole(role));
+        }
+    }
+
+    string email = "admin123@admin.com";
+    string password = "Admin123!";
+
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+    if (await userManager.FindByEmailAsync(email) == null)
+    {
+        var user = new HWWeb.Models.User();
+        user.Email = email;
+        user.UserName = email;
+        user.EmailConfirmed = true;
+        userManager.CreateAsync(user, password).Wait();
+        var res = await userManager.AddToRoleAsync(user, "Admin");
+
+        if (!res.Succeeded)
+        {
+            foreach (var error in res.Errors)
+            {
+                Console.WriteLine(error.Description);
+            }
+        }
+        
+
+    }
+    app.Run();
+}
+
