@@ -1,0 +1,48 @@
+﻿@page
+@model HWWeb.Pages.Roles.RolesModel
+@{
+}
+
+@{
+    ViewData["Title"] = "Roles";
+}
+
+<div class="container">
+    <h1 class="mt-5">Manage Roles</h1>
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <h3>Add New Role</h3>
+            <form method="post" asp-page-handler="AddRole">
+                <div class="form-group">
+                    <label for="roleName">Role Name:</label>
+                    <input type="text" class="form-control" id="roleName" name="roleName" required />
+                </div>
+                <button type="submit" class="btn btn-primary">Add Role</button>
+            </form>
+            <div class="text-danger mt-2">
+                @if (Model.ErrorMessage != null)
+                {
+                    <p>@Model.ErrorMessage</p>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="row mt-5">
+        <div class="col-md-6">
+            <h3>Existing Roles</h3>
+            <ul class="list-group">
+                @foreach (var role in Model.Roles)
+                {
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        @role.Name
+                        <div>
+                            <form method="post" asp-page-handler="DeleteRole" asp-route-roleName="@role.Name">
+                                <button type="submit" class="btn btn-danger btn-sm ml-2">Delete</button>
+                            </form>
+                        </div>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+</div>

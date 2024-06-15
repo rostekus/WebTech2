@@ -1,0 +1,53 @@
+﻿@page
+@model HWWeb.Pages.Order.DetailsModel
+@{
+}
+
+@{
+    ViewData["Title"] = "Order Details";
+}
+
+<h2>Order Details</h2>
+
+<div>
+    <dl class="row">
+        <dt class="col-sm-2">Order ID</dt>
+        <dd class="col-sm-10">@Model.Order.Id</dd>
+        <dt class="col-sm-2">Order Date</dt>
+        <dd class="col-sm-10">@Model.Order.OrderDate</dd>
+        <dt class="col-sm-2">Order Status</dt>
+        <dd class="col-sm-10">@Model.Order.Status</dd>
+    </dl>
+</div>
+
+@if (Model.Order.OrderItems.Any())
+{
+    <h3>Order Items</h3>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Piece Price</th>
+                <th>Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Order.OrderItems)
+            {
+                <tr>
+                    <td>@item.Phone.Model</td>
+                    <td>@item.Quantity</td>
+                    <td>@item.Phone.Price</td>
+                    <td>@(item.Phone.Price * item.Quantity)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No items found in this order.</p>
+}
+<p>Total: @Model.Order.OrderItems.Sum(i => i.Quantity * i.Phone.Price)</p>

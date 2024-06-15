@@ -1,0 +1,70 @@
+﻿@page
+@using HWWeb.Models
+
+
+
+@model DetailsModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<div class="container">
+    <h1 class="mt-5">Details</h1>
+    <div class="card mt-4">
+        <div class="card-body">
+            <h4 class="card-title">Phone Details</h4>
+            <hr />
+            <div class="row">
+                <div class="col-md-3">
+                    <img src="@Model.Phone.Images" class="img-fluid" alt="@Model.Phone.Model">
+                </div>
+                <div class="col-md-9">
+                    <dl class="row">
+                        <dt class="col-sm-3">Model</dt>
+                        <dd class="col-sm-9">@Html.DisplayFor(model => model.Phone.Model)</dd>
+                        <dt class="col-sm-3">Brand</dt>
+                        <dd class="col-sm-9">@Html.DisplayFor(model => model.Phone.BrandId)</dd>
+                        <dt class="col-sm-3">Price</dt>
+                        <dd class="col-sm-9">$@Html.DisplayFor(model => model.Phone.Price)</dd>
+                        <dt class="col-sm-3">Features</dt>
+                        <dd class="col-sm-9">@Html.DisplayFor(model => model.Phone.Features)</dd>
+                        <dt class="col-sm-3">Description</dt>
+                        <dd class="col-sm-9">@Html.DisplayFor(model => model.Phone.Description)</dd>
+                        <dt class="col-sm-3">Inventory</dt>
+                        <dd class="col-sm-9">@Html.DisplayFor(model => model.Phone.Inventory)</dd>
+                    </dl>
+                    <div class="mt-3">
+
+                        <a asp-page="./Index" class="btn btn-secondary ml-2">Back to List</a>
+                    </div>
+                    <div class="mt-3">
+                        @if (Model.Phone.Inventory > 0)
+                        {
+                            <form method="post" asp-page-handler="AddToCart">
+                                <input type="hidden" name="phoneId" value="@Model.Phone.Id" />
+                                <div class="form-group">
+                                    <label for="quantity">Quantity</label>
+                                    <input type="number" name="quantity" value="1" min="1" class="form-control" />
+                                </div>
+                                <button type="submit" class="btn btn-success">Add to Cart</button>
+                            </form>
+                            <div class="text-danger mt-2">
+                                @if (Model.ErrorMessage != null)
+                                {
+                                    <p>@Model.ErrorMessage</p>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="text-danger mt-2">
+                                <p>Item is out of stock</p>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

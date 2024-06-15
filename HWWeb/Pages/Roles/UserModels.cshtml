@@ -1,0 +1,46 @@
+﻿@page
+@model HWWeb.Pages.Roles.UserModels
+
+@{
+    ViewData["Title"] = "Users";
+}
+
+<div class="container">
+    <h1 class="mt-5">Manage Users</h1>
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Roles</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in Model.Users)
+                    {
+                        <tr>
+                            <td>@user.UserName</td>
+                            <td>@user.Email</td>
+                            <td>@string.Join(", ", Model.UserRoles[user.Id])</td>
+                            <td>
+                                <form method="post" asp-page-handler="ChangeRole" class="d-inline">
+                                    <select name="roleName" class="form-control">
+                                        @foreach (var role in Model.Roles)
+                                        {
+                                            <option value="@role">@role</option>
+                                        }
+                                    </select>
+                                    <input type="hidden" name="userId" value="@user.Id" />
+                                    <button type="submit" class="btn btn-primary btn-sm ml-2">Change Role</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

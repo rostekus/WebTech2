@@ -1,11 +1,47 @@
 ﻿@page
-@model IndexModel
+@model HWWeb.Pages.CRUD.PhoneCRUD.IndexPhondModel
+
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Index";
 }
 
-<div class="text-center">
-<a href="/CRUD/PhoneCRUD/Index">Phone</a><br/>
-    <a href="/CRUD/PhoneCRUD/IndexAdmin">Phone</a><br />
-
+<div class="container mt-4">
+    <form method="get" class="form-inline mb-3">
+        <div class="form-row align-items-center">
+            <div class="col">
+                <input type="text" name="SearchString" value="@Model.SearchString" class="form-control mb-2" placeholder="Search by name...">
+            </div>
+            <div class="col-auto">
+                <input type="number" name="MinPrice" value="@Model.MinPrice" class="form-control mb-2" placeholder="Min" step="0.01">
+            </div>
+            <div class="col-auto">
+                <input type="number" name="MaxPrice" value="@Model.MaxPrice" class="form-control mb-2" placeholder="Max" step="0.01">
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-primary mb-2">Search</button>
+            </div>
+            <div class="col-auto">
+                <a asp-page="./Index" class="btn btn-secondary mb-2">Clear</a>
+            </div>
+        </div>
+    </form>
+    <div class="row">
+        @foreach (var item in Model.Phone)
+        {
+            <div class="col-md-4 mb-4">
+                <a asp-page="./Details" asp-route-id="@item.Id" class="card h-100 text-decoration-none">
+                    <div class="card-body">
+                        <img src="@item.Images" class="card-img-top" alt="@item.Model">
+                        <h5 class="card-title">@Html.DisplayFor(modelItem => item.Model)</h5>
+                        <p class="card-text">Brand: @Html.DisplayFor(modelItem => item.BrandId)</p>
+                        <p class="card-text">Price: $@Html.DisplayFor(modelItem => item.Price)</p>
+                        @if (item.Inventory == 0)
+                        {
+                            <p class="text-danger">Sold Out</p>
+                        }
+                    </div>
+                </a>
+            </div>
+        }
+    </div>
 </div>
