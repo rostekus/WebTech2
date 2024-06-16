@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace HWWeb.Pages.CRUD.PhoneCRUD
 {
-    [Authorize(Roles = "Admin, User")]
+    
     public class IndexPhondModel : PageModel
     {
         private readonly HWWeb.Services.AppDBContext _context;

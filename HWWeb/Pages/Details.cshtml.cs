@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace HWWeb.Pages
 {
-    [Authorize(Roles = "Admin, User")]
 
     public class DetailsModel : PageModel
     {
@@ -40,6 +39,7 @@ namespace HWWeb.Pages
             return Page();
         }
 
+        [Authorize]
         public async Task<IActionResult> OnPostAddToCartAsync(int phoneId, int quantity)
         {
             var phone = await _context.Phone.FindAsync(phoneId);

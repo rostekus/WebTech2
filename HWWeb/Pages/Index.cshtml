@@ -1,6 +1,9 @@
 ﻿@page
 @model HWWeb.Pages.CRUD.PhoneCRUD.IndexPhondModel
 
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+
 @{
     ViewData["Title"] = "Index";
 }
@@ -9,7 +12,7 @@
     <form method="get" class="form-inline mb-3">
         <div class="form-row align-items-center">
             <div class="col">
-                <input type="text" name="SearchString" value="@Model.SearchString" class="form-control mb-2" placeholder="Search by name...">
+                <input type="text" name="SearchString" value="@Model.SearchString" class="form-control mb-2" placeholder=@Localizer["search"]>
             </div>
             <div class="col-auto">
                 <input type="number" name="MinPrice" value="@Model.MinPrice" class="form-control mb-2" placeholder="Min" step="0.01">
@@ -18,10 +21,10 @@
                 <input type="number" name="MaxPrice" value="@Model.MaxPrice" class="form-control mb-2" placeholder="Max" step="0.01">
             </div>
             <div class="col-auto">
-                <button type="submit" class="btn btn-primary mb-2">Search</button>
+                <button type="submit" class="btn btn-primary mb-2">@Localizer["searchBtn"]</button>
             </div>
             <div class="col-auto">
-                <a asp-page="./Index" class="btn btn-secondary mb-2">Clear</a>
+                <a asp-page="./Index" class="btn btn-secondary mb-2">@Localizer["clear"]</a>
             </div>
         </div>
     </form>
@@ -33,11 +36,11 @@
                     <div class="card-body">
                         <img src="@item.Images" class="card-img-top" alt="@item.Model">
                         <h5 class="card-title">@Html.DisplayFor(modelItem => item.Model)</h5>
-                        <p class="card-text">Brand: @Html.DisplayFor(modelItem => item.BrandId)</p>
-                        <p class="card-text">Price: $@Html.DisplayFor(modelItem => item.Price)</p>
+                        <p class="card-text">@Localizer["brand"]: @Html.DisplayFor(modelItem => item.BrandId)</p>
+                        <p class="card-text">@Localizer["price"]: $@Html.DisplayFor(modelItem => item.Price)</p>
                         @if (item.Inventory == 0)
                         {
-                            <p class="text-danger">Sold Out</p>
+                            <p class="text-danger">@Localizer["soldout"]</p>
                         }
                     </div>
                 </a>
